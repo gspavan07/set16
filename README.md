@@ -105,7 +105,7 @@ export class AppComponent {
 
 ---
 
-## 1. Hello Component
+## 1. Form Component
 
 **app.component.html**
 ```html
