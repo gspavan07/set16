@@ -1,4 +1,4 @@
-## 1. Book Component with Service
+## 1. Design a lexical analyzer using Lex that removes whitespaces and comments.
 
 ```c
 %{
