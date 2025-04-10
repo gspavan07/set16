@@ -1,158 +1,114 @@
 ## 1. Book Component with Service
 
-### book.service.ts
-```ts
-import { Injectable } from '@angular/core';
+```c
+%{
+#include <stdio.h>
+%}
 
-@Injectable({
-  providedIn: 'root'
-})
-export class BookService {
-  private books = [
-    { id: 1, name: 'The Alchemist' },
-    { id: 2, name: 'Rich Dad Poor Dad' },
-    { id: 3, name: 'Atomic Habits' }
-  ];
+%%
+[" "]                  ; // Ignore whitespace
+"//".*                    ; // Ignore single-line comment
+.                         { printf("%s", yytext); } // Print everything else
+%%
 
-  getBooks() {
-    return this.books;
-  }
+int main() {
+    yylex();
+    return 0;
 }
 ```
+## Input
+```
+Pavan G
+```
+## Output
+```
+PavanG
+```
 
-### book.component.ts
-```ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BookService } from '../book.service';
+## 2. Construct a recursive descent parser for simple arithmetic expressions.
 
-@Component({
-  selector: 'app-book',
-  standalone: true,
-  templateUrl: './book.component.html',
-  styleUrls: ['./book.component.css'],
-  imports: [CommonModule]
-})
-export class BookComponent {
-  books:{id:number, name:string}[] = [];
-  constructor(private bookService: BookService) {
-    this.books = this.bookService.getBooks();
-  }
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+const char *input;
+char lookahead;
+
+void error() {
+    printf("Syntax Error\n");
+    
 }
-```
-
-### book.component.html
-```html
-<h2>Book List</h2>
-<ul>
-  <li *ngFor="let book of books">{{ book.id }} - {{ book.name }}</li>
-</ul>
-```
-
-### app.component.html
-```html
-<app-book></app-book>
-```
-
-### app.component.ts
-```ts
-import { Component } from '@angular/core';
-import { BookComponent } from './book/book.component';
-
-@Component({
-  selector: 'app-root',
-  imports: [BookComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
-})
-export class AppComponent {
-  title = 'demo';
+void match(char token) {
+    if (lookahead == token) {
+        lookahead = *++input; // Move to the next character
+    } else {
+        error();
+    }
 }
-```
 
----
+// Recursive functions for grammar rules
+void E();  // Expression
+void EPrime();  // Expression Tail
+void T();  // Term
+void TPrime();  // Term Tail
+void F();  // Factor
 
-## 2. Order Status with ngSwitch
-
-### app.component.ts
-```ts
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
-})
-export class AppComponent {
-  status: string = 'shipped';
+void E() {
+    T();
+    EPrime();
 }
-```
 
-### app.component.html
-```html
-<h2>Order Status</h2>
-
-<div [ngSwitch]="status">
-  <p *ngSwitchCase="'pending'">🟡 Your order is pending.</p>
-  <p *ngSwitchCase="'shipped'">🚚 Your order has been shipped.</p>
-  <p *ngSwitchCase="'delivered'">✅ Your order has been delivered.</p>
-  <p *ngSwitchDefault>❌ Invalid status.</p>
-</div>
-```
-
----
-
-## 1. Form Component
-
-**app.component.html**
-```html
-<h2>Course Registration</h2>
-
-<form #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)">
-  <div>
-    <label>Name:</label>
-    <input type="text" name="name" [(ngModel)]="course.name" required />
-  </div>
-
-  <div>
-    <label>Email:</label>
-    <input type="email" name="email" [(ngModel)]="course.email" required />
-  </div>
-
-  <div>
-    <label>Course:</label>
-    <input type="text" name="course" [(ngModel)]="course.course" required />
-  </div>
-
-  <button type="submit" [disabled]="!courseForm.valid">Register</button>
-</form>
-```
-
-**app.component.ts**
-```ts
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-@Component({
-  selector: 'app-root',
-  imports: [FormsModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
-})
-export class AppComponent {
-  course = {
-    name: '',
-    email: '',
-    course: ''
-  };
-
-  onSubmit(form: any) {
-    console.log('Form submitted:', form.value);
-    alert('Course Registered Successfully!');
-  }
+void EPrime() {
+    if (lookahead == '+') {
+        match('+');
+        T();
+    }
 }
-```
 
+void T() {
+    F();
+    TPrime();
+}
+
+void TPrime() {
+    if (lookahead == '*') {
+        match('*');
+        F();
+    }
+}
+
+void F() {
+    if (isdigit(lookahead)) {
+        match(lookahead);
+    } else {
+        error();
+    }
+}
+
+int main() {
+    char expression[100];
+    printf("Enter an arithmetic expression: ");
+    scanf("%s", expression);
+    input = expression;
+    lookahead = *input;
+    
+    E();
+    if (lookahead == '\0') {
+        printf("Parsing Successful!\n");
+    } else {
+        error();
+    }
+
+    return 0;
+}
+
+```
+## Input
+```
+2+3*4
+```
+## Output
+```
+Parsing Successful!
+```
 ---
