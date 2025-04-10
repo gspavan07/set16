@@ -6,9 +6,9 @@
 %}
 
 %%
-[" "]                  ; // Ignore whitespace
-"//".*                    ; // Ignore single-line comment
-.                         { printf("%s", yytext); } // Print everything else
+[" "]  ; // Ignore whitespace
+"//".* ; // Ignore single-line comment
+.      { printf("%s", yytext); } // Print everything else
 %%
 
 int main() {
